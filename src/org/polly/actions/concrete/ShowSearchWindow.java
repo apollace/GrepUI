@@ -18,20 +18,28 @@
  */
 package org.polly.actions.concrete;
 
+import javax.swing.JFrame;
 import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
 
 import org.polly.actions.Action;
 import org.polly.ui.SearchWindow;
 
 public class ShowSearchWindow implements Action {
-	private final SearchWindow searchWindow;
+	private SearchWindow searchWindow = null;
+	private final JTextArea textArea;
 
 	public ShowSearchWindow(JTextArea textArea) {
-		this.searchWindow = new SearchWindow(textArea);
+		this.textArea = textArea;
 	}
 
 	@Override
 	public void execute() {
+		if (this.searchWindow == null) {
+			this.searchWindow = new SearchWindow(
+					(JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, this.textArea), this.textArea);
+		}
+
 		this.searchWindow.setVisible(true);
 	}
 }

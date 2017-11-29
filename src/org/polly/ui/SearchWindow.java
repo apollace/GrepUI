@@ -22,10 +22,13 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
@@ -35,15 +38,34 @@ import javax.swing.border.EmptyBorder;
 public class SearchWindow extends JDialog {
 	private static final long serialVersionUID = 1L;
 	private final JPanel contentPanel = new JPanel();
-	private final JCheckBox chckbxReverseSearch = new JCheckBox("Reverse search");
+	private final JCheckBox chckbxReverseSearch;
 	private JTextField txtSearch;
+	private JPanel searchBoxPanel;
 
 	private final JTextArea searchArea;
 
 	/**
 	 * Create the dialog.
 	 */
-	public SearchWindow(JTextArea textArea) {
+	public SearchWindow(JFrame owner, JTextArea textArea) {
+		super(owner);
+		this.setResizable(false);
+		this.setTitle("Search");
+
+		owner.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowGainedFocus(WindowEvent e) {
+				owner.setAlwaysOnTop(true);
+				super.windowGainedFocus(e);
+			}
+
+			@Override
+			public void windowLostFocus(WindowEvent e) {
+				owner.setAlwaysOnTop(false);
+				super.windowLostFocus(e);
+			}
+		});
+
 		this.searchArea = textArea;
 		this.setBounds(100, 100, 450, 166);
 		this.getContentPane().setLayout(new BorderLayout());
@@ -55,15 +77,19 @@ public class SearchWindow extends JDialog {
 			this.contentPanel.add(lblSearch, BorderLayout.NORTH);
 		}
 		{
+			this.searchBoxPanel = new JPanel();
+			this.searchBoxPanel.setLayout(new BorderLayout());
 			this.txtSearch = new JTextField();
-			this.contentPanel.add(this.txtSearch, BorderLayout.CENTER);
-			this.txtSearch.setColumns(10);
+			this.searchBoxPanel.add(this.txtSearch, BorderLayout.NORTH);
+			this.contentPanel.add(this.searchBoxPanel, BorderLayout.CENTER);
+
+			this.chckbxReverseSearch = new JCheckBox("Reverse search");
+			this.searchBoxPanel.add(this.chckbxReverseSearch, BorderLayout.SOUTH);
+			this.chckbxReverseSearch.setToolTipText("Search from bottom to top");
 		}
 		{
 			final JPanel panel = new JPanel();
 			this.contentPanel.add(panel, BorderLayout.SOUTH);
-			this.chckbxReverseSearch.setToolTipText("Search from bottom to top");
-			panel.add(this.chckbxReverseSearch);
 
 		}
 		{
