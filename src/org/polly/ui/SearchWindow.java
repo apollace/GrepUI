@@ -1,18 +1,18 @@
 /**
  * This file belonging to GrepUi an open source tool to search and trace
- * information contained in your logs.  
+ * information contained in your logs.
  * Copyright (C) 2017  Alessandro Pollace
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -20,17 +20,17 @@ package org.polly.ui;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
-import javax.swing.JTextArea;
 import javax.swing.JCheckBox;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
 
 public class SearchWindow extends JDialog {
 	private static final long serialVersionUID = 1L;
@@ -38,121 +38,122 @@ public class SearchWindow extends JDialog {
 	private final JCheckBox chckbxReverseSearch = new JCheckBox("Reverse search");
 	private JTextField txtSearch;
 
-	private JTextArea searchArea;
-
-	private boolean searchDown() {
-		return searchDown(searchArea.getSelectionEnd());
-	}
-
-	private boolean searchDown(int from) {
-		String toSearch = txtSearch.getText();
-		String text = searchArea.getText();
-
-		int found = text.indexOf(toSearch, from);
-		if (found == -1) {
-			return false;
-		}
-
-		searchArea.setSelectionStart(found);
-		searchArea.setSelectionEnd(found + toSearch.length());
-		return true;
-	}
-
-	private boolean searchUp() {
-		int pos = searchArea.getSelectionStart();
-		return searchUp(pos);
-	}
-
-	private boolean searchUp(int from) {
-		String toSearch = txtSearch.getText();
-		String text = searchArea.getText();
-
-		from--;
-		if (from <= 0) {
-			from = txtSearch.getText().length();
-		}
-		
-		int found = text.lastIndexOf(toSearch, from);
-		if (found == -1) {
-			return false;
-		}
-
-		searchArea.setSelectionStart(found);
-		searchArea.setSelectionEnd(found + toSearch.length());
-		return true;
-	}
-
-	private void search() {
-		if (chckbxReverseSearch.isSelected()) {
-			if (!searchUp()) {
-				searchUp(searchArea.getText().length());
-			}
-		} else {
-			if (!searchDown()) {
-				searchDown(0);
-			}
-		}
-	}
+	private final JTextArea searchArea;
 
 	/**
 	 * Create the dialog.
 	 */
 	public SearchWindow(JTextArea textArea) {
-		searchArea = textArea;
-		setBounds(100, 100, 450, 166);
-		getContentPane().setLayout(new BorderLayout());
-		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-		getContentPane().add(contentPanel, BorderLayout.CENTER);
-		contentPanel.setLayout(new BorderLayout(0, 0));
+		this.searchArea = textArea;
+		this.setBounds(100, 100, 450, 166);
+		this.getContentPane().setLayout(new BorderLayout());
+		this.contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+		this.getContentPane().add(this.contentPanel, BorderLayout.CENTER);
+		this.contentPanel.setLayout(new BorderLayout(0, 0));
 		{
-			JLabel lblSearch = new JLabel("Search:");
-			contentPanel.add(lblSearch, BorderLayout.NORTH);
+			final JLabel lblSearch = new JLabel("Search:");
+			this.contentPanel.add(lblSearch, BorderLayout.NORTH);
 		}
 		{
-			txtSearch = new JTextField();
-			contentPanel.add(txtSearch, BorderLayout.CENTER);
-			txtSearch.setColumns(10);
+			this.txtSearch = new JTextField();
+			this.contentPanel.add(this.txtSearch, BorderLayout.CENTER);
+			this.txtSearch.setColumns(10);
 		}
 		{
-			JPanel panel = new JPanel();
-			contentPanel.add(panel, BorderLayout.SOUTH);
-			chckbxReverseSearch.setToolTipText("Search from bottom to top");
-			panel.add(chckbxReverseSearch);
+			final JPanel panel = new JPanel();
+			this.contentPanel.add(panel, BorderLayout.SOUTH);
+			this.chckbxReverseSearch.setToolTipText("Search from bottom to top");
+			panel.add(this.chckbxReverseSearch);
 
 		}
 		{
-			JPanel buttonPane = new JPanel();
+			final JPanel buttonPane = new JPanel();
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
-			getContentPane().add(buttonPane, BorderLayout.SOUTH);
+			this.getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
-				JButton okButton = new JButton("Search");
+				final JButton okButton = new JButton("Search");
 				okButton.addActionListener(new ActionListener() {
+					@Override
 					public void actionPerformed(ActionEvent e) {
-						search();
+						SearchWindow.this.search();
 					}
 				});
 				okButton.setActionCommand("OK");
 				buttonPane.add(okButton);
-				getRootPane().setDefaultButton(okButton);
+				this.getRootPane().setDefaultButton(okButton);
 			}
 		}
 	}
 
-	@Override
-	public void show() {
-		if (searchArea.getSelectedText() != null && searchArea.getSelectedText().length() > 0) {
-			txtSearch.setText(searchArea.getSelectedText());
+	private void search() {
+		if (this.chckbxReverseSearch.isSelected()) {
+			if (!this.searchUp()) {
+				this.searchUp(this.searchArea.getText().length());
+			}
+		} else {
+			if (!this.searchDown()) {
+				this.searchDown(0);
+			}
 		}
-		super.show();
+	}
+
+	private boolean searchDown() {
+		return this.searchDown(this.searchArea.getSelectionEnd());
+	}
+
+	private boolean searchDown(int from) {
+		final String toSearch = this.txtSearch.getText();
+		final String text = this.searchArea.getText();
+
+		final int found = text.indexOf(toSearch, from);
+		if (found == -1) {
+			return false;
+		}
+
+		this.searchArea.setSelectionStart(found);
+		this.searchArea.setSelectionEnd(found + toSearch.length());
+		return true;
+	}
+
+	private boolean searchUp() {
+		final int pos = this.searchArea.getSelectionStart();
+		return this.searchUp(pos);
+	}
+
+	private boolean searchUp(int from) {
+		final String toSearch = this.txtSearch.getText();
+		final String text = this.searchArea.getText();
+
+		from--;
+		if (from <= 0) {
+			from = this.txtSearch.getText().length();
+		}
+
+		final int found = text.lastIndexOf(toSearch, from);
+		if (found == -1) {
+			return false;
+		}
+
+		this.searchArea.setSelectionStart(found);
+		this.searchArea.setSelectionEnd(found + toSearch.length());
+		return true;
 	}
 
 	@Override
 	public void setVisible(boolean b) {
 		if (b) {
-			if (searchArea.getSelectedText() != null && searchArea.getSelectedText().length() > 0) {
-				txtSearch.setText(searchArea.getSelectedText());
+			if (this.searchArea.getSelectedText() != null && this.searchArea.getSelectedText().length() > 0) {
+				this.txtSearch.setText(this.searchArea.getSelectedText());
 			}
 		}
 		super.setVisible(b);
+	}
+
+	@Override
+	public void show() {
+		if (this.searchArea.getSelectedText() != null && this.searchArea.getSelectedText().length() > 0) {
+			this.txtSearch.setText(this.searchArea.getSelectedText());
+		}
+		super.show();
 	}
 }
