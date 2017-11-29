@@ -122,6 +122,12 @@ public class SearchWindow extends JDialog {
 				this.searchDown(0);
 			}
 		}
+
+		// The set visible to true is required in order to get have the ability
+		// to continue to press enter and go ahead with the research. Without
+		// this call the search window lose the focus and if press enter the
+		// event is captured by the window that contains the searchArea
+		this.setVisible(true);
 	}
 
 	private boolean searchDown() {
