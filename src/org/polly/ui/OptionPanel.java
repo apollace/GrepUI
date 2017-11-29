@@ -23,7 +23,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
-import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -35,7 +34,6 @@ import java.util.TreeMap;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import org.polly.persistency.Option;
@@ -128,16 +126,13 @@ public class OptionPanel extends JPanel {
 		final String description = option.getDescription();
 
 		// The <html> is used to enable the auto-wrapping
-		final JTextArea optionDescription = new JTextArea("Key(" + option.getKey() + ") " + description);
-		optionDescription.setEditable(false);
-		optionDescription.setLineWrap(true);
-		optionDescription.setBackground(SystemColor.control);
+		final JLabel optionDescription = new JLabel("<html>Key(" + option.getKey() + ") " + description + "</html>");
 
 		// Resize and change the description color in order to make the look
 		// more fancy
 		final Font optionDescriptionFont = optionDescription.getFont();
 		optionDescription.setFont(
-				new Font(optionDescriptionFont.getName(), Font.PLAIN, (int) (optionDescriptionFont.getSize() * 0.7)));
+				new Font(optionDescriptionFont.getName(), Font.PLAIN, (int) (optionDescriptionFont.getSize() * 0.9)));
 		optionDescription.setForeground(Color.DARK_GRAY);
 
 		optionDescription.setMaximumSize(new Dimension(250, 0));
