@@ -112,6 +112,7 @@ public class SearchWindow extends JDialog {
 	}
 
 	private void search() {
+		this.searchArea.requestFocus();
 		if (this.chckbxReverseSearch.isSelected()) {
 			if (!this.searchUp()) {
 				this.searchUp(this.searchArea.getText().length());
