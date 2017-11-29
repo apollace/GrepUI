@@ -27,6 +27,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
+import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
 
 import org.polly.ui.GrepUIPanel;
 
@@ -40,10 +42,18 @@ public class Main {
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
-				if (System.getProperty("os.name").toLowerCase().contains("mac")) {
-					System.setProperty("apple.laf.useScreenMenuBar", "true");
-				}
 				try {
+					for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+						if ("Nimbus".equals(info.getName())) {
+							UIManager.setLookAndFeel(info.getClassName());
+							break;
+						}
+					}
+					
+					if (System.getProperty("os.name").toLowerCase().contains("mac")) {
+						System.setProperty("apple.laf.useScreenMenuBar", "true");
+					}
+
 					Main window = new Main();
 					window.frame.setVisible(true);
 				} catch (Exception e) {

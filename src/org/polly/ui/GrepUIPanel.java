@@ -119,7 +119,6 @@ public class GrepUIPanel extends JPanel {
 	private Collection<Highlighter> highlighters;
 
 	private ActionManager actionManager;
-	private JToolBar grepBar;
 	private JScrollPane logScrollPane;
 	private JTextArea logArea;
 	private JPanel grepPanel;
@@ -153,11 +152,8 @@ public class GrepUIPanel extends JPanel {
 		highlightsMenu = new JMenu("Highlights");
 		this.menuBar.add(highlightsMenu);
 
-		grepBar = new JToolBar();
-		add(grepBar, BorderLayout.NORTH);
-
 		grepPanel = new JPanel();
-		grepBar.add(grepPanel);
+		add(grepPanel, BorderLayout.NORTH);
 		grepPanel.setLayout(new BorderLayout(0, 0));
 
 		grepOptionPanel = new OptionPanel(defaultOptions);
@@ -168,8 +164,6 @@ public class GrepUIPanel extends JPanel {
 
 		logArea = new JTextArea();
 		logArea.setEditable(false);
-		logArea.setText(
-				"questa è una prova per vedere \nse gle evidenziatori funzionano\n\nho già detto che è una prova?\n\nPRO\nVA\n\n\n\nprova\n\n\nPROVA\n\n\n\n\n\n\n\n\n\n\nprova\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nprova\n\n\n\n\n\n\n\n\nciao\n\n\n\n\n\nprova\n\n\n\n\n\nmntmsf");
 		logScrollPane.setViewportView(logArea);
 
 		Action executeCommand = new RunCommand(logArea, grepOptionPanel.getOptions());
