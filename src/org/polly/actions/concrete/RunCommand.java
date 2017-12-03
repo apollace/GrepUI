@@ -18,8 +18,11 @@
  */
 package org.polly.actions.concrete;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.PrintWriter;
@@ -34,8 +37,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.JTextArea;
+import javax.swing.Timer;
 
 import org.polly.actions.Action;
+import org.polly.actions.aggregated.RunExternalProgramAggregatedAction;
 import org.polly.persistency.Option;
 
 public class RunCommand implements Action {
@@ -87,37 +92,10 @@ public class RunCommand implements Action {
 			vsArrays.add("-c");
 			vsArrays.add(localCommand);
 
-			final ProcessBuilder builder = new ProcessBuilder(vsArrays);
-			builder.redirectOutput(new File(outputPath));
-			builder.redirectError(new File(outputPath));
-			final Process p = builder.start(); // may throw IOException
-			p.waitFor();
-
-			final LineNumberReader reader = new LineNumberReader(
-					new InputStreamReader(new FileInputStream(outputPath), "UTF-8"));
-
-			final int maxFileLineToRead = Integer.valueOf(this.getOption(RunCommand.maxFileLineToRead).getLastValue());
-			try {
-				// Clean the builder instead of allocate a new one
-				this.sb.setLength(0);
-				this.sb.append("Executed command: ");
-				this.sb.append(localCommand).append(" ");
-				this.sb.append(localCommand).append("\n");
-				this.sb.append("--\n\n");
-				String line;
-				while ((line = reader.readLine()) != null && reader.getLineNumber() <= maxFileLineToRead) {
-					this.sb.append(line).append("\n");
-				}
-				this.output.setText(this.sb.toString());
-			} finally {
-				reader.close();
-			}
+			this.runAndFork(outputPath, localCommand, vsArrays);
 
 		} catch (final Throwable e) {
-			final StringWriter sw = new StringWriter();
-			final PrintWriter pw = new PrintWriter(sw);
-			e.printStackTrace(pw);
-			this.output.setText(sw.toString());
+			this.printExceptionToOutput(e);
 		}
 	}
 
@@ -129,5 +107,67 @@ public class RunCommand implements Action {
 		}
 
 		return null;
+	}
+
+	private void printExceptionToOutput(final Throwable e) {
+		final StringWriter sw = new StringWriter();
+		final PrintWriter pw = new PrintWriter(sw);
+		e.printStackTrace(pw);
+		this.output.setText(sw.toString());
+	}
+
+	private void runAndFork(String outputPath, String localCommand, final List<String> vsArrays) throws Exception {
+		final RunExternalProgramAggregatedAction runner = RunExternalProgramAggregatedAction.getInstance();
+		final boolean isRunning = runner.run(vsArrays, outputPath);
+		if (!isRunning) {
+			this.output.setText(
+					"There is something wrong, probably you have already run something, please you it is stuck kill it");
+			return;
+		}
+
+		final Timer t = new Timer(1000, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				LineNumberReader reader = null;
+				try {
+					if (runner.isAlive()) {
+						// skip this time, retry later
+						return;
+					}
+
+					reader = new LineNumberReader(new InputStreamReader(new FileInputStream(outputPath), "UTF-8"));
+
+					final int maxFileLineToRead = Integer
+							.valueOf(RunCommand.this.getOption(RunCommand.maxFileLineToRead).getLastValue());
+
+					// Clean the builder instead of allocate a new one
+					RunCommand.this.sb.setLength(0);
+					RunCommand.this.sb.append("Executed command: ");
+					RunCommand.this.sb.append(localCommand).append(" ");
+					RunCommand.this.sb.append(localCommand).append("\n");
+					RunCommand.this.sb.append("--\n\n");
+					String line;
+					while ((line = reader.readLine()) != null && reader.getLineNumber() <= maxFileLineToRead) {
+						RunCommand.this.sb.append(line).append("\n");
+					}
+					RunCommand.this.output.setText(RunCommand.this.sb.toString());
+
+				} catch (final Exception e) {
+					RunCommand.this.printExceptionToOutput(e);
+				} finally {
+					if (reader != null) {
+						try {
+							reader.close();
+						} catch (final IOException e) {
+							RunCommand.this.printExceptionToOutput(e);
+						}
+					}
+				}
+
+				((Timer) event.getSource()).stop();
+			}
+		});
+		t.setRepeats(true);
+		t.start();
 	}
 }

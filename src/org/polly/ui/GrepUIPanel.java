@@ -38,6 +38,7 @@ import javax.swing.KeyStroke;
 
 import org.polly.actions.Action;
 import org.polly.actions.ActionManager;
+import org.polly.actions.concrete.KillLastRunnedCommand;
 import org.polly.actions.concrete.RunCommand;
 import org.polly.actions.concrete.ShowSearchWindow;
 import org.polly.actions.concrete.TextAreaAddHighlight;
@@ -139,6 +140,9 @@ public class GrepUIPanel extends JPanel {
 		final Action executeCommand = new RunCommand(this.logArea, this.grepOptionPanel.getOptions());
 		KeyStroke keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0);
 		this.actionManager.addAction("Run", executeCommand, this.editMenu, this.logArea, keyStroke);
+
+		final Action killCommand = new KillLastRunnedCommand();
+		this.actionManager.addAction("Kill last run", killCommand, this.editMenu, this.logArea);
 
 		final Action showSearchWindow = new ShowSearchWindow(this.logArea);
 		keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_F, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
