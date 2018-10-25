@@ -73,7 +73,7 @@ public class GrepUIPanel extends JPanel {
 		defaultOptions.add(new Option("additionalOption", "Additional option", "", "Grep additional option",
 				Option.VisibilityMode.VISIBLE_ON_DEMAND));
 
-		defaultOptions.add(new Option(RunCommand.command, "Command", "grep ${pattern} ${additionalOption} ${filename} ",
+		defaultOptions.add(new Option(RunCommand.command, "Command", "grep \"${pattern}\" ${additionalOption} ${filename} ",
 				Option.VisibilityMode.VISIBLE_ON_DEMAND));
 
 		defaultOptions.add(new Option(RunCommand.homePath, "Home", System.getProperty("user.home"),
@@ -102,11 +102,6 @@ public class GrepUIPanel extends JPanel {
 		this(menuBar, defaultHighlights);
 	}
 
-	/**
-	 * Create the panel.
-	 *
-	 * @throws IOException
-	 */
 	public GrepUIPanel(JMenuBar menuBar, Collection<HighlightColor> highlights) {
 		this.initUI(menuBar, highlights);
 	}
