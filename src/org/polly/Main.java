@@ -50,6 +50,7 @@ public class Main {
 
 					final Main window = new Main();
 					window.frame.setVisible(true);
+					window.frame.setTitle("GrepUI");
 				} catch (final Exception e) {
 					e.printStackTrace();
 				}
