@@ -1,0 +1,21 @@
+<project name="GrepUI" basedir="." default="main">
+    <target name="clean">
+        <delete dir="build"/>
+    </target>
+
+    <target name="compile">
+        <mkdir dir="build/classes"/>
+        <javac srcdir="src" destdir="build/classes"/>
+    </target>
+
+    <target name="jar" depends="compile">
+        <mkdir dir="build/jar"/>
+        <jar destfile="build/jar/GrepUI.jar" basedir="build/classes">
+            <manifest>
+                <attribute name="Main-Class" value="org.polly.Main"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="main" depends="clean,jar"/>
+</project>
